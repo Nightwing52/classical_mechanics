@@ -57,40 +57,42 @@ result = minimize(
 
 # Construct the full x vector including boundaries
 x_optimized = np.concatenate(([0], result.x, [1]))
-x_dot_optimized = np.gradient(x_optimized, delta_x)
 
-# Plot the results
-plt.figure(figsize=(10, 6))
+def graph_result(initial_guess, optimized):
+    # Plot the results
+    plt.figure(figsize=(10, 6))
 
-# Plot x and x_dot for initial guess and optimized results
-space = np.linspace(0.0, 1.0, TOTAL_POINTS)
-plt.subplot(2, 2, 1)
-plt.plot(space, x_initial, label='x (Initial Guess)', color='gray', linestyle='--')
-plt.plot(space, x_optimized, label='x (Optimized)', color='blue')
-plt.title('x (Initial vs Optimized)')
-plt.xlabel('t')
-plt.ylabel('x')
-plt.legend()
+    # Plot x and x_dot for initial guess and optimized results
+    space = np.linspace(0.0, 1.0, TOTAL_POINTS)
+    plt.subplot(2, 2, 1)
+    plt.plot(space, initial_guess, label='x (Initial Guess)', color='gray', linestyle='--')
+    plt.plot(space, optimized, label='x (Optimized)', color='blue')
+    plt.title('x (Initial vs Optimized)')
+    plt.xlabel('t')
+    plt.ylabel('x')
+    plt.legend()
 
-# Plot L(t)
-L_initial = np.gradient(x_initial, delta_x)**2
-L_optimized = x_dot_optimized**2
-plt.subplot(2, 2, 2)
-plt.plot(space, L_initial, label='L(t) (Initial Guess)', color='gray', linestyle='--')
-plt.plot(space, L_optimized, label='L(t) (Optimized)', color='orange')
-plt.title('L(t) (Initial vs Optimized)')
-plt.xlabel('t')
-plt.ylabel('L(t)')
-plt.legend()
+    # Plot L(t)
+    L_initial = np.gradient(initial_guess, delta_x)**2
+    L_optimized = np.gradient(optimized, delta_x)**2
+    plt.subplot(2, 2, 2)
+    plt.plot(space, L_initial, label='L(t) (Initial Guess)', color='gray', linestyle='--')
+    plt.plot(space, L_optimized, label='L(t) (Optimized)', color='orange')
+    plt.title('L(t) (Initial vs Optimized)')
+    plt.xlabel('t')
+    plt.ylabel('L(t)')
+    plt.legend()
 
-# Plot S
-plt.subplot(2, 2, 3)
-plt.plot(space, np.cumsum(L_initial)/TOTAL_POINTS, label='S(t) (Initial Guess)', color='gray', linestyle='--')
-plt.plot(space, np.cumsum(L_optimized)/TOTAL_POINTS, label='S(t) (Optimized)', color='orange')
-plt.title('S(t) (Initial vs Optimized)')
-plt.xlabel('t')
-plt.ylabel('S(t)')
-plt.legend()
+    # Plot S
+    plt.subplot(2, 2, 3)
+    plt.plot(space, np.cumsum(L_initial)/TOTAL_POINTS, label='S(t) (Initial Guess)', color='gray', linestyle='--')
+    plt.plot(space, np.cumsum(L_optimized)/TOTAL_POINTS, label='S(t) (Optimized)', color='orange')
+    plt.title('S(t) (Initial vs Optimized)')
+    plt.xlabel('t')
+    plt.ylabel('S(t)')
+    plt.legend()
 
-plt.tight_layout()
-plt.savefig('/app/output/output.png')
+    plt.tight_layout()
+    plt.savefig('/app/output/output.png')
+
+graph_result(x_initial, x_optimized)
