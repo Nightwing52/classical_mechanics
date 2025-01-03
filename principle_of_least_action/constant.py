@@ -85,8 +85,8 @@ plt.legend()
 
 # Plot S
 plt.subplot(2, 2, 3)
-plt.plot(space, np.cumsum(L_initial), label='S(t) (Initial Guess)', color='gray', linestyle='--')
-plt.plot(space, np.cumsum(L_optimized), label='S(t) (Optimized)', color='orange')
+plt.plot(space, np.cumsum(L_initial)/TOTAL_POINTS, label='S(t) (Initial Guess)', color='gray', linestyle='--')
+plt.plot(space, np.cumsum(L_optimized)/TOTAL_POINTS, label='S(t) (Optimized)', color='orange')
 plt.title('S(t) (Initial vs Optimized)')
 plt.xlabel('t')
 plt.ylabel('S(t)')
