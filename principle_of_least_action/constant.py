@@ -4,14 +4,7 @@ from scipy.optimize import minimize
 
 # Number of interior points
 TOTAL_POINTS = 100
-n_points = TOTAL_POINTS-2  # Total points is n_points + 2 (boundary points)
 delta_x = 1.0/(TOTAL_POINTS-1)
-
-test_x = np.linspace(0, 1, 10)
-test_y = np.linspace(0, 1, 10)**2
-print("x: "+str(test_x))
-print("y: "+str(test_y))
-print("y': "+str(np.gradient(test_y, 1.0/9.0)))
 
 # Define the objective function for optimization
 def constant_potential(x_inner):
@@ -33,17 +26,13 @@ def harmonic_oscillator(x_inner):
 def energy_constraint(x_inner):
     x = np.concatenate(([0], x_inner, [1]))
     x_dot = np.gradient(x, delta_x)
-    return x_dot**2 - x_dot_initial**2
+    return x_dot**2 - 1
 
 # Initial guess for interior points of x
-x_inner_initial = np.linspace(0, 1, n_points + 2)[1:-1]
+x_inner_initial = np.linspace(0, 1, TOTAL_POINTS)[1:-1]
 
 # Compute initial momentum and energy
 x_initial = np.concatenate(([0], x_inner_initial, [1]))**2
-t = np.linspace(0, 1, len(x_initial))
-x_dot_initial = (1.0-0.0)/1.0
-print(x_dot_initial)
-initial_energy = x_dot_initial**2 # np.sum(x_dot_initial**2)
 
 # Define constraints
 constraints = [
