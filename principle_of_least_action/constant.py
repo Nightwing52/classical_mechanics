@@ -3,8 +3,9 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 # Number of interior points
-n_points = 98  # Total points is n_points + 2 (boundary points)
-delta_x = 1.0/(n_points+1.0)
+TOTAL_POINTS = 100
+n_points = TOTAL_POINTS-2  # Total points is n_points + 2 (boundary points)
+delta_x = 1.0/(TOTAL_POINTS-1)
 
 test_x = np.linspace(0, 1, 10)
 test_y = np.linspace(0, 1, 10)**2
@@ -62,32 +63,33 @@ x_dot_optimized = np.gradient(x_optimized, delta_x)
 plt.figure(figsize=(10, 6))
 
 # Plot x and x_dot for initial guess and optimized results
+space = np.linspace(0.0, 1.0, TOTAL_POINTS)
 plt.subplot(2, 2, 1)
-plt.plot(x_initial, label='x (Initial Guess)', color='gray', linestyle='--')
-plt.plot(x_optimized, label='x (Optimized)', color='blue')
+plt.plot(space, x_initial, label='x (Initial Guess)', color='gray', linestyle='--')
+plt.plot(space, x_optimized, label='x (Optimized)', color='blue')
 plt.title('x (Initial vs Optimized)')
-plt.xlabel('Index')
-plt.ylabel('Value')
+plt.xlabel('t')
+plt.ylabel('x')
 plt.legend()
 
 # Plot L(t)
 L_initial = np.gradient(x_initial, delta_x)**2
 L_optimized = x_dot_optimized**2
 plt.subplot(2, 2, 2)
-plt.plot(L_initial, label='L(t) (Initial Guess)', color='gray', linestyle='--')
-plt.plot(L_optimized, label='L(t) (Optimized)', color='orange')
+plt.plot(space, L_initial, label='L(t) (Initial Guess)', color='gray', linestyle='--')
+plt.plot(space, L_optimized, label='L(t) (Optimized)', color='orange')
 plt.title('L(t) (Initial vs Optimized)')
-plt.xlabel('Index')
-plt.ylabel('Value')
+plt.xlabel('t')
+plt.ylabel('L(t)')
 plt.legend()
 
 # Plot S
 plt.subplot(2, 2, 3)
-plt.plot(np.cumsum(L_initial), label='S(t) (Initial Guess)', color='gray', linestyle='--')
-plt.plot(np.cumsum(L_optimized), label='S(t) (Optimized)', color='orange')
+plt.plot(space, np.cumsum(L_initial), label='S(t) (Initial Guess)', color='gray', linestyle='--')
+plt.plot(space, np.cumsum(L_optimized), label='S(t) (Optimized)', color='orange')
 plt.title('S(t) (Initial vs Optimized)')
-plt.xlabel('Index')
-plt.ylabel('Value')
+plt.xlabel('t')
+plt.ylabel('S(t)')
 plt.legend()
 
 plt.tight_layout()
