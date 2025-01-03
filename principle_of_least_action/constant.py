@@ -17,7 +17,7 @@ print("y': "+str(np.gradient(test_y, 1.0/9.0)))
 def constant_potential(x_inner):
     x = np.concatenate(([0], x_inner, [1]))  # Add fixed boundary points
     x_dot = np.gradient(x, delta_x)  # Compute the gradient
-    return np.sum(x_dot**2)  # Minimize the sum of squares of the gradient
+    return x_dot**2  # Minimize the sum of squares of the gradient
 
 def constant_gravity(x_inner):
     x = np.concatenate(([0], x_inner, [0]))  # Add fixed boundary points
@@ -52,13 +52,13 @@ constraints = [
 
 # Perform optimization
 result = minimize(
-    constant_potential, x_inner_initial, method="SLSQP", constraints=constraints
+    lambda x : sum(constant_potential(x)), x_inner_initial, method="SLSQP", constraints=constraints
 )
 
 # Construct the full x vector including boundaries
 x_optimized = np.concatenate(([0], result.x, [1]))
 
-def graph_result(initial_guess, optimized):
+def graph_result(initial_guess, optimized, lagrangian):
     # Plot the results
     plt.figure(figsize=(10, 6))
 
@@ -73,8 +73,8 @@ def graph_result(initial_guess, optimized):
     plt.legend()
 
     # Plot L(t)
-    L_initial = np.gradient(initial_guess, delta_x)**2
-    L_optimized = np.gradient(optimized, delta_x)**2
+    L_initial = lagrangian(initial_guess[1:TOTAL_POINTS-1])
+    L_optimized = lagrangian(optimized[1:TOTAL_POINTS-1])
     plt.subplot(2, 2, 2)
     plt.plot(space, L_initial, label='L(t) (Initial Guess)', color='gray', linestyle='--')
     plt.plot(space, L_optimized, label='L(t) (Optimized)', color='orange')
@@ -95,4 +95,4 @@ def graph_result(initial_guess, optimized):
     plt.tight_layout()
     plt.savefig('/app/output/output.png')
 
-graph_result(x_initial, x_optimized)
+graph_result(x_initial, x_optimized, constant_potential)
