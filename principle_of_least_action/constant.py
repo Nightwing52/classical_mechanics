@@ -2,20 +2,37 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
+# Number of interior points
+n_points = 98  # Total points is n_points + 2 (boundary points)
+delta_x = 1.0/(n_points+1.0)
+
+test_x = np.linspace(0, 1, 10)
+test_y = np.linspace(0, 1, 10)**2
+print("x: "+str(test_x))
+print("y: "+str(test_y))
+print("y': "+str(np.gradient(test_y, 1.0/9.0)))
+
 # Define the objective function for optimization
-def objective(x_inner):
+def constant_potential(x_inner):
     x = np.concatenate(([0], x_inner, [1]))  # Add fixed boundary points
-    x_dot = np.gradient(x)  # Compute the gradient
+    x_dot = np.gradient(x, delta_x)  # Compute the gradient
+    return np.sum(x_dot**2)  # Minimize the sum of squares of the gradient
+
+def constant_gravity(x_inner):
+    x = np.concatenate(([0], x_inner, [0]))  # Add fixed boundary points
+    x_dot = np.gradient(x, delta_x)  # Compute the gradient
+    return np.sum(x_dot**2)  # Minimize the sum of squares of the gradient
+
+def harmonic_oscillator(x_inner):
+    x = np.concatenate(([0], x_inner, [0]))  # Add fixed boundary points
+    x_dot = np.gradient(x, delta_x)  # Compute the gradient
     return np.sum(x_dot**2)  # Minimize the sum of squares of the gradient
 
 # Energy constraint: ensure x_dot^2 at each time step matches the initial value
 def energy_constraint(x_inner):
     x = np.concatenate(([0], x_inner, [1]))
-    x_dot = np.gradient(x)
+    x_dot = np.gradient(x, delta_x)
     return x_dot**2 - x_dot_initial**2
-
-# Number of interior points
-n_points = 98  # Total points is n_points + 2 (boundary points)
 
 # Initial guess for interior points of x
 x_inner_initial = np.linspace(0, 1, n_points + 2)[1:-1]
@@ -34,12 +51,12 @@ constraints = [
 
 # Perform optimization
 result = minimize(
-    objective, x_inner_initial, method="SLSQP", constraints=constraints
+    constant_potential, x_inner_initial, method="SLSQP", constraints=constraints
 )
 
 # Construct the full x vector including boundaries
 x_optimized = np.concatenate(([0], result.x, [1]))
-x_dot_optimized = np.gradient(x_optimized)
+x_dot_optimized = np.gradient(x_optimized, delta_x)
 
 # Plot the results
 plt.figure(figsize=(10, 6))
@@ -54,7 +71,7 @@ plt.ylabel('Value')
 plt.legend()
 
 # Plot L(t)
-L_initial = np.gradient(x_initial)**2
+L_initial = np.gradient(x_initial, delta_x)**2
 L_optimized = x_dot_optimized**2
 plt.subplot(2, 2, 2)
 plt.plot(L_initial, label='L(t) (Initial Guess)', color='gray', linestyle='--')
