@@ -28,25 +28,6 @@ def energy_constraint(x_inner):
     x_dot = np.gradient(x, delta_x)
     return x_dot**2 - 1
 
-# Initial guess for interior points of x
-x_inner_initial = np.linspace(0, 1, TOTAL_POINTS)[1:-1]
-
-# Compute initial momentum and energy
-x_initial = np.concatenate(([0], x_inner_initial, [1]))**2
-
-# Define constraints
-constraints = [
-    {"type": "eq", "fun": energy_constraint},
-]
-
-# Perform optimization
-result = minimize(
-    lambda x : sum(constant_potential(x)), x_inner_initial, method="SLSQP", constraints=constraints
-)
-
-# Construct the full x vector including boundaries
-x_optimized = np.concatenate(([0], result.x, [1]))
-
 def graph_result(initial_guess, optimized, lagrangian):
     # Plot the results
     plt.figure(figsize=(10, 6))
@@ -83,5 +64,20 @@ def graph_result(initial_guess, optimized, lagrangian):
 
     plt.tight_layout()
     plt.savefig('/app/output/output.png')
+
+# CONSTANT POTENTIAL
+# Initial guess for interior points of x
+x_inner_initial = np.linspace(0, 1, TOTAL_POINTS)[1:-1]
+x_initial = np.concatenate(([0], x_inner_initial, [1]))**2
+
+constraints = [
+    {"type": "eq", "fun": energy_constraint},
+]
+
+result = minimize(
+    lambda x : sum(constant_potential(x)), x_inner_initial, method="SLSQP", constraints=constraints
+)
+
+x_optimized = np.concatenate(([0], result.x, [1]))
 
 graph_result(x_initial, x_optimized, constant_potential)
