@@ -29,6 +29,7 @@ class BilliardsSimulation:
 
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation, PillowWriter
+import matplotlib.cm as cm
 
 class BilliardsVisualizer:
     def __init__(self, simulation):
@@ -38,10 +39,16 @@ class BilliardsVisualizer:
         fig, ax = plt.subplots()
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 1)
+
+        # Generate a unique color for each ball based on a colormap
+        num_balls = len(self.simulation.positions)
+        colors = cm.viridis(np.linspace(0, 1, num_balls))  # Use 'viridis' colormap
+
         scatter = ax.scatter([], [])
 
         def init():
             scatter.set_offsets(self.simulation.positions)
+            scatter.set_color(colors)
             return scatter,
 
         def update(frame):
