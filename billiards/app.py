@@ -30,7 +30,7 @@ class BilliardsVisualizer:
     def __init__(self, simulation):
         self.simulation = simulation
 
-    def animate(self, frames=100):
+    def animate(self, frames=100, fileName="output.gif"):
         fig, ax = plt.subplots()
         ax.set_xlim(0, 1)
         ax.set_ylim(0, 1)
@@ -46,14 +46,10 @@ class BilliardsVisualizer:
             return scatter,
 
         ani = FuncAnimation(fig, update, frames=frames, init_func=init, blit=True)
-        save_path = "/app/output/output.gif"
+        save_path = "/app/output/"+fileName
         if save_path.endswith('.gif'):
                 writer = PillowWriter(fps=30)
                 ani.save(save_path, writer=writer)
-        elif save_path.endswith('.mp4'):
-            from matplotlib.animation import FFMpegWriter
-            writer = FFMpegWriter(fps=30)
-            ani.save(save_path, writer=writer)
         else:
             raise ValueError("Unsupported file format. Use '.gif' or '.mp4'.")
 
