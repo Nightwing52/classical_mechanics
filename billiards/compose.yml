@@ -8,3 +8,4 @@ services:
     environment:
       - DISPLAY=${DISPLAY}
     tty: true
+    command: pytest /app/tests/ & /app/python app.py
