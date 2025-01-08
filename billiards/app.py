@@ -12,12 +12,16 @@ class BilliardsSimulation:
         self.time_step = time_step
 
     def update(self):
+        # next step
+        next_step = self.positions+self.velocities*self.time_step
+
         # Reflect at walls (x-direction)
-        mask_x = (self.positions[:, 0] <= 0) | (self.positions[:, 0] >= 1)
+        mask_x = (next_step[:, 0] <= 0) | (next_step[:, 0] >= 1)
+        print(mask_x)
         self.velocities[mask_x, 0] *= -1
 
         # Reflect at walls (y-direction)
-        mask_y = (self.positions[:, 1] <= 0) | (self.positions[:, 1] >= 1)
+        mask_y = (next_step[:, 1] <= 0) | (next_step[:, 1] >= 1)
         self.velocities[mask_y, 1] *= -1
         
         # Update positions
