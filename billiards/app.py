@@ -64,20 +64,19 @@ class BilliardsVisualizer:
         else:
             raise ValueError("Unsupported file format. Use '.gif' or '.mp4'.")
 
-# Initialize positions and velocities as NumPy arrays
-positions = np.array([
-    [0.2, 0.3],
-    [0.7, 0.8]
-])
 
-velocities = np.array([
-    [1.0, 2.0],
-    [-2.0, -1.0]
-])
+def simulate_blob(x0, y0, vx, vy, N=5, epsilon=0.01, frames=100):
+    x_offsets = np.linspace(x0-epsilon, x0+epsilon, N)
+    y_offsets = np.linspace(y0-epsilon, y0+epsilon, N)
+    X, Y = np.meshgrid(x_offsets, y_offsets)
+    positions = np.column_stack((X.ravel(), Y.ravel()))
+    print(positions)
+    print(len(positions))
+    velocities = np.column_stack((np.full((N**2, 1), vx), np.full((N**2, 1), vy)))
 
-# Create simulation and visualizer
-sim = BilliardsSimulation(positions, velocities)
-viz = BilliardsVisualizer(sim)
+    # Create simulation and visualizer
+    sim = BilliardsSimulation(positions, velocities)
+    viz = BilliardsVisualizer(sim)
+    viz.animate(frames)
 
-# Animate the simulation
-viz.animate(frames=200)
+simulate_blob(0.1, 0.1, -1.0, 1.0, frames=200)
